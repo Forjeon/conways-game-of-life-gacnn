@@ -1,3 +1,4 @@
+#![allow(unused)]//FIXME:DEL
 use rand::distr::{Bernoulli, Distribution};
 
 const BOARD_WIDTH: usize = 8;
@@ -23,18 +24,35 @@ impl ConwayGame {
 	}
 
 	fn get_cell(&self, x: usize, y: usize) -> bool {
-		todo!()
+		self.generation[(x % BOARD_WIDTH) + (y % BOARD_WIDTH) * BOARD_WIDTH]
+	}
+
+	fn get_live_neighbours(&self, x: usize, y: usize) -> u8 {
+		// Neighbour: any of the eight adjacent cells surrounding a given cell
+		let mut neighbours = 0u8;
+		for i in -1..1 {
+			for j in -1..1 {
+				neighbours += match self.get_cell(x.wrapping_add_signed(i), y.wrapping_add_signed(j)) {
+					true => 1,
+					false => 0,
+				}
+			}
+		}
+		neighbours
 	}
 
 	fn tick(&mut self) -> () {
 		let mut successor = self.generation;
 
-		// Neighbour: any of the eight adjacent cells surrounding a given cell
-		// Kill cells with less than two or more than three living neighbours (eight surrounding cells)
-		todo!();
-
-		// Reproduce cells with exactly three living neighbours
-		todo!();
+		for x in 0..BOARD_WIDTH {
+			for y in 0..BOARD_WIDTH {
+				successor[x * BOARD_WIDTH + y] = match self.get_live_neighbours(x, y) {
+					2 => self.get_cell(x, y),	// Persist
+					3 => true,					// Persist or reproduce
+					_ => false,					// Kill due to under/over population
+				}
+			}
+		}
 
 		self.generation = successor;
 	}
@@ -51,4 +69,91 @@ pub fn run(num_instances: u32, max_timesteps: u32, sparsity: f32) -> Vec<(Conway
 	let mut board = ConwayGame::new(sparsity);
 	board.tick_by(5);
 	todo!()
+}
+
+
+#[test]
+fn test_tick_die() {
+	let mut game0 = ConwayGame { generation: [
+		true,  false, false, false, false, false, false, false,
+		false, false, false, false, false, false, false, false,
+		false, false, false, false, false, false, false, false,
+		false, false, false, false, false, false, false, false,
+		false, false, false, false, false, false, false, false,
+		false, false, false, false, false, false, false, false,
+		false, false, false, false, false, false, false, false,
+		false, false, false, false, false, false, false, false,
+	] };
+	assert!(game0.get_cell(0, 0));
+	game0.tick_by(1);
+	assert!(!game0.get_cell(0, 0));
+	game0.tick_by(1000);
+	assert!(!game0.get_cell(0, 0));
+
+	let mut game1 = ConwayGame { generation: [
+		true,  true,  false, false, false, false, false, true,
+		false, false, false, false, false, false, false, false,
+		false, false, false, false, false, false, false, false,
+		false, false, false, false, false, false, false, false,
+		false, false, false, false, false, false, false, false,
+		false, false, false, false, false, false, false, false,
+		false, false, false, false, false, false, false, false,
+		true,  false, false, false, false, false, false, true,
+	] };
+	assert!(game1.get_cell(0, 0) && game1.get_cell(1, 0) && game1.get_cell(7, 0) && game1.get_cell(0, 7));
+	game1.tick_by(1);
+	assert!(!(game1.get_cell(0, 0) && game1.get_cell(1, 0) && game1.get_cell(7. 0) && game1.get_cell(0, 7)));
+	game1.tick_by(12345);
+	assert!(!(game1.get_cell(0, 0) && game1.get_cell(1, 0) && game1.get_cell(7. 0) && game1.get_cell(0, 7)));
+}
+
+#[test]
+fn test_tick_live() {
+	let mut game0 = ConwayGame { generation: [
+		true,  false, false, false, false, false, false, true,
+		false, false, false, false, false, false, false, false,
+		false, false, false, false, false, false, false, false,
+		false, false, false, false, false, false, false, false,
+		false, false, false, false, false, false, false, false,
+		false, false, false, false, false, false, false, false,
+		false, false, false, false, false, false, false, false,
+		true,  false, false, false, false, false, false, false,
+	] };
+	assert!(game0.get_cell(0, 0) && game0.get_cell(7, 0) && game0.get_cell(0, 7));
+	game0.tick_by(1);
+	assert!(game0.get_cell(0, 0) && game0.get_cell(7, 0) && game0.get_cell(0, 7));
+	game0.tick_by(643253);
+	assert!(game0.get_cell(0, 0) && game0.get_cell(7, 0) && game0.get_cell(0, 7));
+
+	let mut game1 = ConwayGame { generation: [
+		false, false, false, false, false, false, false, false,
+		false, false, false, false, false, true,  false, false,
+		false, false, false, false, true,  true,  false, false,
+		false, false, false, false, false, false, false, false,
+		false, false, false, false, false, false, false, false,
+		false, false, false, false, false, false, false, false,
+		false, false, false, false, false, false, false, false,
+		false, false, false, false, false, false, false, false,
+	] };
+	assert!(game1.get_cell(5, 1) && game1.get_cell(4, 2) && game1.get_cell(5, 2));
+	game1.tick_by(1);
+	assert!(game1.get_cell(5, 1) && game1.get_cell(4, 2) && game1.get_cell(5, 2));
+	game1.tick_by(42);
+	assert!(game1.get_cell(5, 1) && game1.get_cell(4, 2) && game1.get_cell(5, 2));
+
+	let mut game2 = ConwayGame { generation: [
+		true,  false, false, false, false, false, false, true,
+		false, false, false, false, false, false, false, false,
+		false, false, false, false, false, false, false, false,
+		false, false, false, false, false, false, false, false,
+		false, false, false, false, false, false, false, false,
+		false, false, false, false, false, false, false, false,
+		false, false, false, false, false, false, false, false,
+		true,  false, false, false, false, false, false, true,
+	] };
+	assert!(game2.get_cell(0, 0) && game2.get_cell(7, 0) && game2.get_cell(0, 7) && game2.get_cell(7, 7));
+	game2.tick_by(1);
+	assert!(game2.get_cell(0, 0) && game2.get_cell(7, 0) && game2.get_cell(0, 7) && game2.get_cell(7, 7));
+	game2.tick_by(1234567890);
+	assert!(game2.get_cell(0, 0) && game2.get_cell(7, 0) && game2.get_cell(0, 7) && game2.get_cell(7, 7));
 }
