@@ -25,49 +25,19 @@ impl ConwayGame {
 	}
 
 	fn get_cell(&self, x: usize, y: usize) -> bool {
-		self.generation[(x % BOARD_WIDTH) + (y % BOARD_WIDTH) * BOARD_WIDTH]
+		todo!()
 	}
 
 	fn get_live_neighbours(&self, x: usize, y: usize) -> u8 {
-		print!("({x},{y})");//FIXME:DEL
-		// Neighbour: any of the eight adjacent cells surrounding a given cell
-		let mut neighbours = 0u8;
-		for i in -1..1 {
-			for j in -1..1 {
-				if i == j && i == 0 { continue };	// Don't count yourself as a neighbour!
-				print!("|{},{}-{}", x.wrapping_add_signed(i), y.wrapping_add_signed(j), self.get_cell(x.wrapping_add_signed(i), y.wrapping_add_signed(j)));//FIXME:DEL
-				neighbours += match self.get_cell(x.wrapping_add_signed(i), y.wrapping_add_signed(j)) {
-					true => 1,
-					false => 0,
-				}
-			}
-		}
-		println!("-{neighbours}");//FIXME:DEL
-		neighbours
+		todo!()
 	}
 
 	fn tick(&mut self) -> () {
-		let mut successor = self.generation;
-
-		for x in 0..BOARD_WIDTH {
-			for y in 0..BOARD_WIDTH {
-				successor[x * BOARD_WIDTH + y] = match self.get_live_neighbours(x, y) {
-					//2 => self.get_cell(x, y),	// Persist
-					//3 => true,					// Persist or reproduce
-					2 => { println!("{x}, {y} persist"); self.get_cell(x, y) },	// Persist
-					3 => { println!("{x}, {y} reproduce"); true },					// Persist or reproduce
-					_ => false,					// Kill due to under/over population
-				}
-			}
-		}
-
-		self.generation = successor;
+		todo!()
 	}
 
 	pub fn tick_by(&mut self, timestep: u32) -> () {
-		for _ in 0..timestep {
-			self.tick();
-		}
+		todo!()
 	}
 }
 
@@ -81,9 +51,24 @@ pub fn run(num_instances: u32, max_timesteps: u32, sparsity: f32) -> Vec<(Conway
 
 #[test]
 fn test_get_cell() {
-	todo!()
+	let mut game0 = ConwayGame { generation: [
+		false, false, false, false, false, false, false, false,
+		false, false, false, false, false, false, false, false,
+		false, false, false, false, false, false, false, false,
+		false, false, false, false, false, false, false, false,
+		false, false, false, false, false, false, false, false,
+		false, false, false, false, false, false, false, false,
+		false, false, false, false, false, false, false, false,
+		false, false, false, false, false, false, false, false,
+	] };
+	for x in 0..BOARD_WIDTH {
+		for y in 0..BOARD_WIDTH {
+			assert!(!game0.get_cell(x, y));
+		}
+	}
 }
 
+/*
 #[test]
 fn test_get_live_neighbours() {
 	todo!()
@@ -260,3 +245,4 @@ fn test_tick_by_live() {
 	game2.tick_by(1234567890);
 	assert!(game2.get_cell(0, 0) && game2.get_cell(7, 0) && game2.get_cell(0, 7) && game2.get_cell(7, 7));
 }
+*/
