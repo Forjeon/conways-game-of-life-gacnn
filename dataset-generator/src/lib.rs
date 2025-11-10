@@ -31,7 +31,17 @@ impl ConwayGame {
 	}
 
 	fn count_live_neighbors(&self, x: isize, y: isize) -> u8 {
-		todo!()
+		let mut count = 0;
+		for j in -1..=1 {
+			for i in -1..=1 {
+				count += match (i, j, self.get_cell(x.wrapping_add(i), y.wrapping_add(j))) {
+					(0, 0, _) => 0,
+					(.., true) => 1,
+					_ => 0,
+				}
+			}
+		}
+		count
 	}
 
 	fn tick(&mut self) -> () {
@@ -188,8 +198,8 @@ fn test_count_live_neighbors() {
 		false, false, false, false, false, false, false, false,
 		false, false, false, false, false, false, false, false,
 	] };
-	for y in 0..BOARD_WIDTH {
-		for x in 0..BOARD_WIDTH {
+	for y in 1..(BOARD_WIDTH -1) {
+		for x in 1..(BOARD_WIDTH -1) {
 			assert!(game0.count_live_neighbors(x.try_into().unwrap(), y.try_into().unwrap()) == 0);
 		}
 	}
@@ -204,8 +214,8 @@ fn test_count_live_neighbors() {
 		true, true, true, true, true, true, true, true,
 		true, true, true, true, true, true, true, true,
 	] };
-	for y in 0..BOARD_WIDTH {
-		for x in 0..BOARD_WIDTH {
+	for y in 1..(BOARD_WIDTH - 1) {
+		for x in 1..(BOARD_WIDTH - 1) {
 			assert!(game1.count_live_neighbors(x.try_into().unwrap(), y.try_into().unwrap()) == 8);
 		}
 	}
@@ -220,7 +230,7 @@ fn test_count_live_neighbors() {
 		false, false, false, true, true, true, false, false,
 		false, false, false, true, true, true, false, false,
 	] };
-	assert!(game2.count_live_neighbors(0, 0) == 0);
+	assert!(game2.count_live_neighbors(1, 1) == 0);
 	assert!(game2.count_live_neighbors(4, 1) == 4);
 	assert!(game2.count_live_neighbors(6, 1) == 2);
 	assert!(game2.count_live_neighbors(1, 4) == 2);
