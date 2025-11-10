@@ -358,3 +358,24 @@ fn test_tick_toroidal() {
 	assert!(!game1.get_cell(3, 3));
 	assert!(game1.count_live_neighbors(3, 3) == 8);
 }
+
+#[test]
+fn test_tick_by_toroidal() {
+	let mut game0 = ConwayGame { generation: [
+		false, true,  false, false, false, false, false, false,
+		false, false, true,  false, false, false, false, false,
+		true,  true,  true,  false, false, false, false, false,
+		false, false, false, false, false, false, false, false,
+		false, false, false, false, false, false, false, false,
+		false, false, false, false, false, false, false, false,
+		false, false, false, false, false, false, false, false,
+		false, false, false, false, false, false, false, false,
+	] };
+	assert!(game0.get_cell(1, 0) && game0.get_cell(2, 1) && game0.get_cell(0, 2) && game0.get_cell(1, 2) && game0.get_cell(2, 2));
+	game0.tick_by(4);
+	assert!(game0.get_cell(2, 1) && game0.get_cell(3, 2) && game0.get_cell(1, 3) && game0.get_cell(2, 3) && game0.get_cell(3, 3));
+	game0.tick_by(28);
+	assert!(game0.get_cell(1, 0) && game0.get_cell(2, 1) && game0.get_cell(0, 2) && game0.get_cell(1, 2) && game0.get_cell(2, 2));
+	game0.tick_by(32);
+	assert!(game0.get_cell(1, 0) && game0.get_cell(2, 1) && game0.get_cell(0, 2) && game0.get_cell(1, 2) && game0.get_cell(2, 2));
+}
