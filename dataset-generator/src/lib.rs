@@ -238,6 +238,55 @@ fn test_count_live_neighbors() {
 	assert!(game2.count_live_neighbors(4, 6) == 8);
 }
 
+#[test]
+fn test_count_live_neighbors_toroidal() {
+	let game0 = ConwayGame { generation: [
+		false, false, false, false, false, false, false, false,
+		false, false, false, false, false, false, false, false,
+		false, false, false, false, false, false, false, false,
+		false, false, false, false, false, false, false, false,
+		false, false, false, false, false, false, false, false,
+		false, false, false, false, false, false, false, false,
+		false, false, false, false, false, false, false, false,
+		false, false, false, false, false, false, false, false,
+	] };
+	for y in 0..BOARD_WIDTH {
+		for x in 0..BOARD_WIDTH {
+			assert!(game0.count_live_neighbors(x.try_into().unwrap(), y.try_into().unwrap()) == 0);
+		}
+	}
+
+	let game1 = ConwayGame { generation: [
+		true, true, true, true, true, true, true, true,
+		true, true, true, true, true, true, true, true,
+		true, true, true, true, true, true, true, true,
+		true, true, true, true, true, true, true, true,
+		true, true, true, true, true, true, true, true,
+		true, true, true, true, true, true, true, true,
+		true, true, true, true, true, true, true, true,
+		true, true, true, true, true, true, true, true,
+	] };
+	for y in 0..BOARD_WIDTH {
+		for x in 0..BOARD_WIDTH {
+			assert!(game1.count_live_neighbors(x.try_into().unwrap(), y.try_into().unwrap()) == 8);
+		}
+	}
+
+	let game2 = ConwayGame { generation: [
+		false, false, false, true, false, true, true, true,
+		false, true, false, false, false, false, false, false,
+		false, false, false, true, false, true, false, false,
+		true, true, false, false, false, false, false, false,
+		false, true, false, false, false, false, false, false,
+		false, false, false, true, true, true, false, false,
+		true, false, false, true, true, true, false, true,
+		false, false, false, true, true, true, false, true,
+	] };
+	assert!(game2.count_live_neighbors(7, 3) == 1);
+	assert!(game2.count_live_neighbors(2, 7) == 3);
+	assert!(game2.count_live_neighbors(0, 7) == 5);
+}
+
 /*
 #[test]
 fn test_tick_die() {
