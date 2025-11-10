@@ -23,10 +23,14 @@ impl ConwayGame {
 		ConwayGame{ generation }
 	}
 
-	fn get_cell(&self, x: isize, y: isize) -> bool {
+	fn cell_coords_to_index(x: isize, y: isize) -> usize {
 		let x = 0usize.wrapping_add_signed(x);
 		let y = 0usize.wrapping_add_signed(y);
-		self.generation[(x % BOARD_WIDTH) + BOARD_WIDTH * (y % BOARD_WIDTH)]
+		(x % BOARD_WIDTH) + BOARD_WIDTH * (y % BOARD_WIDTH)
+	}
+
+	fn get_cell(&self, x: isize, y: isize) -> bool {
+		self.generation[ConwayGame::cell_coords_to_index(x, y)]
 	}
 
 	fn count_live_neighbors(&self, x: isize, y: isize) -> u8 {
@@ -44,7 +48,21 @@ impl ConwayGame {
 	}
 
 	fn tick(&mut self) -> () {
-		todo!()
+		let mut successor: ConwayBoard = self.generation;
+
+		for y in 0..BOARD_WIDTH {
+			for x in 0..BOARD_WIDTH {
+				let x = x.try_into().unwrap();
+				let y = y.try_into().unwrap();
+				successor[ConwayGame::cell_coords_to_index(x, y)] = match self.count_live_neighbors(x, y) {
+					2 => self.get_cell(x, y),	// Persist
+					3 => true,					// Persist or reproduce
+					_ => false,					// Die
+				};
+			}
+		}
+
+		self.generation = successor;
 	}
 
 	pub fn tick_by(&mut self, timestep: u32) -> () {
@@ -313,7 +331,7 @@ fn test_tick_toroidal() {
 	assert!(game0.count_live_neighbors(0, 0) == 0);
 	// Test small group lives
 	assert!(game0.get_cell(3, 4));
-	assert!(game0.count_live_neighbors(3, 4) == 2);
+	assert!(game0.count_live_neighbors(3, 4) == 3);
 	// Test medium group repopulates and dies
 	assert!(game0.get_cell(5, 7));
 	assert!(game0.count_live_neighbors(5, 7) == 1);
@@ -338,5 +356,5 @@ fn test_tick_toroidal() {
 	assert!(game1.get_cell(0, 0) && game1.get_cell(7, 0) && game1.get_cell(0, 7) && game1.get_cell(7, 7));
 	// Test large group dies and persists
 	assert!(!game1.get_cell(3, 3));
-	assert!(game1.count_live_neighbors(3, 3) == 4);
+	assert!(game1.count_live_neighbors(3, 3) == 8);
 }
