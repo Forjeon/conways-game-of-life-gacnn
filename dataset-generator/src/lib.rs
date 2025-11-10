@@ -65,8 +65,10 @@ impl ConwayGame {
 		self.generation = successor;
 	}
 
-	pub fn tick_by(&mut self, timestep: u32) -> () {
-		todo!()
+	pub fn tick_by(&mut self, timesteps: u32) -> () {
+		for _ in 0..timesteps {
+			self.tick();
+		}
 	}
 }
 
