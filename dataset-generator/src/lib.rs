@@ -38,7 +38,7 @@ impl ConwayGame {
 					(0, 0, _) => 0,
 					(.., true) => 1,
 					_ => 0,
-				}
+				};
 			}
 		}
 		count
@@ -273,7 +273,7 @@ fn test_count_live_neighbors_toroidal() {
 	}
 
 	let game2 = ConwayGame { generation: [
-		false, false, false, true, false, true, true, true,
+		true, false, false, true, false, true, false, true,
 		false, true, false, false, false, false, false, false,
 		false, false, false, true, false, true, false, false,
 		true, true, false, false, false, false, false, false,
