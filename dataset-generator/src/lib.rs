@@ -30,7 +30,7 @@ impl ConwayGame {
 		self.generation[(x % BOARD_WIDTH) + BOARD_WIDTH * (y % BOARD_WIDTH)]
 	}
 
-	fn get_live_neighbors(&self, x: usize, y: usize) -> u8 {
+	fn count_live_neighbors(&self, x: isize, y: isize) -> u8 {
 		todo!()
 	}
 
@@ -51,7 +51,7 @@ pub fn run(num_instances: u32, max_timesteps: u32, sparsity: f32) -> Vec<(Conway
 
 #[test]
 fn test_get_cell() {
-	let mut game0 = ConwayGame { generation: [
+	let game0 = ConwayGame { generation: [
 		false, false, false, false, false, false, false, false,
 		false, false, false, false, false, false, false, false,
 		false, false, false, false, false, false, false, false,
@@ -67,7 +67,7 @@ fn test_get_cell() {
 		}
 	}
 
-	let mut game1 = ConwayGame { generation: [
+	let game1 = ConwayGame { generation: [
 		true, false, true, false, true, false, true, false,
 		true, false, true, false, true, false, true, false,
 		true, false, true, false, true, false, true, false,
@@ -86,7 +86,7 @@ fn test_get_cell() {
 		}
 	}
 
-	let mut game2 = ConwayGame { generation: [
+	let game2 = ConwayGame { generation: [
 		true, true, true, true, true, true, true, true,
 		true, true, true, true, true, true, true, true,
 		true, true, true, true, true, true, true, true,
@@ -105,7 +105,7 @@ fn test_get_cell() {
 
 #[test]
 fn test_get_cell_toroidal() {
-	let mut game0 = ConwayGame { generation: [
+	let game0 = ConwayGame { generation: [
 		true, false, true, false, true, false, true, false,
 		true, false, true, false, true, false, true, false,
 		true, false, true, false, true, false, true, false,
@@ -141,7 +141,7 @@ fn test_get_cell_toroidal() {
 	assert!(game0.get_cell(1187311368, 1187311368));	// (0, 0)
 	assert!(!game0.get_cell(23, 13));					// (7, 5)
 
-	let mut game1 = ConwayGame { generation: [
+	let game1 = ConwayGame { generation: [
 		false, true, false, true, false, true, false, true,
 		false, true, false, true, false, true, false, true,
 		false, true, false, true, false, true, false, true,
@@ -176,12 +176,59 @@ fn test_get_cell_toroidal() {
 	assert!(!game1.get_cell(-126, 241777899));	// (6, 3)
 }
 
-/*
 #[test]
-fn test_get_live_neighbors() {
-	todo!()
+fn test_count_live_neighbors() {
+	let game0 = ConwayGame { generation: [
+		false, false, false, false, false, false, false, false,
+		false, false, false, false, false, false, false, false,
+		false, false, false, false, false, false, false, false,
+		false, false, false, false, false, false, false, false,
+		false, false, false, false, false, false, false, false,
+		false, false, false, false, false, false, false, false,
+		false, false, false, false, false, false, false, false,
+		false, false, false, false, false, false, false, false,
+	] };
+	for y in 0..BOARD_WIDTH {
+		for x in 0..BOARD_WIDTH {
+			assert!(game0.count_live_neighbors(x.try_into().unwrap(), y.try_into().unwrap()) == 0);
+		}
+	}
+
+	let game1 = ConwayGame { generation: [
+		true, true, true, true, true, true, true, true,
+		true, true, true, true, true, true, true, true,
+		true, true, true, true, true, true, true, true,
+		true, true, true, true, true, true, true, true,
+		true, true, true, true, true, true, true, true,
+		true, true, true, true, true, true, true, true,
+		true, true, true, true, true, true, true, true,
+		true, true, true, true, true, true, true, true,
+	] };
+	for y in 0..BOARD_WIDTH {
+		for x in 0..BOARD_WIDTH {
+			assert!(game1.count_live_neighbors(x.try_into().unwrap(), y.try_into().unwrap()) == 8);
+		}
+	}
+
+	let game2 = ConwayGame { generation: [
+		false, false, false, true, false, true, false, false,
+		false, true, false, false, false, false, false, false,
+		false, false, false, true, false, true, false, false,
+		true, true, false, false, false, false, false, false,
+		false, true, false, false, false, false, false, false,
+		false, false, false, true, true, true, false, false,
+		false, false, false, true, true, true, false, false,
+		false, false, false, true, true, true, false, false,
+	] };
+	assert!(game2.count_live_neighbors(0, 0) == 0);
+	assert!(game2.count_live_neighbors(4, 1) == 4);
+	assert!(game2.count_live_neighbors(6, 1) == 2);
+	assert!(game2.count_live_neighbors(1, 4) == 2);
+	assert!(game2.count_live_neighbors(1, 6) == 0);
+	assert!(game2.count_live_neighbors(4, 6) == 8);
 }
 
+/*
 #[test]
 fn test_tick_die() {
 	let mut game0 = ConwayGame { generation: [
