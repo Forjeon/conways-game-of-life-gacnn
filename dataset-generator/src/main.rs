@@ -1,5 +1,6 @@
 use std::env;
-use std::io::BufWriter;
+use std::fs::File;
+use std::io::{BufWriter, Write};
 use std::path::Path;
 
 use dataset_generator::{ConwayBoard, run};
@@ -23,7 +24,7 @@ fn encode_instance(input: &ConwayBoard, timestep: u32, target: &ConwayBoard) -> 
 	encoding
 }
 
-fn main() -> Result<String, String> {
+fn main() -> Result<(), String> {
 	let args: Vec<String> = env::args().collect();
 	
 	// Validate CLI args
@@ -31,8 +32,11 @@ fn main() -> Result<String, String> {
 		0 => unreachable!(),
 		1 => return Err("Missing required outfilepath, num_instances, max_timestep, and sparsity arguments".to_string()),
 		2 => {
-			match args.get(1).unwrap() {
-				"-h" | "--help" => return Ok(format!("Usage: {} outfilepath num_instances max_timestep sparsity", args.get(0).unwrap())),
+			match args.get(1).unwrap().as_str() {
+				"-h" | "--help" => {
+					println!("Usage: {} outfilepath num_instances max_timestep sparsity", args.get(0).unwrap());
+					return Ok(());
+				},
 				_ => return Err("Missing required num_instances, max_timestep, and sparsity arguments".to_string())
 			}
 		},
@@ -45,22 +49,35 @@ fn main() -> Result<String, String> {
 	let outfilepath = Path::new(args.get(1).unwrap());
 
 	if outfilepath.is_dir() {
-		return Err("outfilepath must not point to a directory".to_string());
+		return Err("The outfilepath argument must not point to a directory".to_string());
 	}
 
-	let num_instances = args.get(2).unwrap().parse::<u32>()?;
-	let max_timestep = args.get(3).unwrap().parse::<u32>()?;
-	let sparsity = args.get(4).unwrap().parse::<f32>()?;
+	let num_instances = match args.get(2).unwrap().parse::<u32>() {
+		Ok(val) => val,
+		_ => return Err("The num_instances argument must be a positive number".to_string()),
+	};
 
-	if sparsity <= 0.0 || sparsity >= 1.0 {
-		return Err("sparsity must be a value between 0 and 1".to_string());
-	}
+	let max_timestep = match args.get(3).unwrap().parse::<u32>() {
+		Ok(val) => val,
+		_ => return Err("The max_timestep argument must be a positive number".to_string()),
+	};
+
+	let sparsity = match args.get(4).unwrap().parse::<f32>() {
+		Ok(val) if val >= 0.0 && val <= 1.0 => val,
+		_ => return Err("The sparsity argument must be a number between 0 and 1".to_string()),
+	};
 
 	// Generate instances
 	//let instances = run(100_000, 10, 0.25);
 	let instances = run(num_instances, max_timestep, sparsity);
 
 	// Write instances
-	todo!();
-	Ok(format!("Successfully saved {num_instances} generated instances to {}", outfilepath.display()))
+	let mut writer = BufWriter::new(File::create(outfilepath).unwrap());
+	for (input, timestep, target) in instances {
+		match writer.write(format!("{}\n", encode_instance(&input, timestep, &target)).as_bytes()) {
+			Err(e) => return Err(format!("Failed to write instances to file: {e}")),
+			_ => (),
+		}
+	}
+	Ok(())
 }
