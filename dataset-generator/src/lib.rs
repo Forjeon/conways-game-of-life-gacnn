@@ -1,23 +1,23 @@
-#![allow(unused)]//FIXME:DEL
-use rand::distr::{Bernoulli, Distribution};
+use rand::distr::{Bernoulli, Distribution, Uniform};
+use rand::rngs::ThreadRng;
 
-const BOARD_WIDTH: usize = 8;
-const BOARD_SIZE: usize = BOARD_WIDTH * BOARD_WIDTH;
+pub const BOARD_WIDTH: usize = 8;
+pub const BOARD_AXIS_MAX: usize = BOARD_WIDTH - 1;
+pub const BOARD_SIZE: usize = BOARD_WIDTH * BOARD_WIDTH;
 
-type ConwayBoard = [bool; BOARD_SIZE];
+pub type ConwayBoard = [bool; BOARD_SIZE];
 
 struct ConwayGame {
 	generation: ConwayBoard
 }
 
 impl ConwayGame {
-	pub fn new(sparsity: f32) -> ConwayGame {
+	pub fn new(rng: &mut ThreadRng, sparsity: f32) -> ConwayGame {
 		let bernoulli_distr = Bernoulli::new(sparsity.into()).unwrap();
-		let mut rng = rand::rng();
 
 		let mut generation: ConwayBoard = [false; BOARD_SIZE];
 		for cell in &mut generation {
-			*cell = bernoulli_distr.sample(&mut rng);
+			*cell = bernoulli_distr.sample(rng);
 		}
 		
 		ConwayGame{ generation }
@@ -65,8 +65,8 @@ impl ConwayGame {
 		self.generation = successor;
 	}
 
-	pub fn tick_by(&mut self, timesteps: u32) -> () {
-		for _ in 0..timesteps {
+	pub fn tick_by(&mut self, timestep: u32) -> () {
+		for _ in 0..timestep {
 			self.tick();
 		}
 	}
@@ -74,7 +74,19 @@ impl ConwayGame {
 
 // Returns a vector of instances, each being a tuple of initial board, timestep, and target board
 pub fn run(num_instances: u32, max_timesteps: u32, sparsity: f32) -> Vec<(ConwayBoard, u32, ConwayBoard)> {
-	todo!()
+	let mut instances = Vec::<(ConwayBoard, u32, ConwayBoard)>::new();
+	let mut rng = rand::rng();
+	let timestep_distr = Uniform::try_from(1..(max_timesteps + 1)).unwrap();
+
+	for _ in 0..num_instances {
+		let mut game = ConwayGame::new(&mut rng, sparsity);
+		let initial_board = game.generation;
+		let timestep = timestep_distr.sample(&mut rng);
+		game.tick_by(timestep);
+		instances.push((initial_board, timestep, game.generation));
+	}
+
+	instances
 }
 
 
@@ -233,8 +245,8 @@ fn test_count_live_neighbors() {
 		true, true, true, true, true, true, true, true,
 		true, true, true, true, true, true, true, true,
 	] };
-	for y in 1..(BOARD_WIDTH - 1) {
-		for x in 1..(BOARD_WIDTH - 1) {
+	for y in 1..BOARD_AXIS_MAX {
+		for x in 1..BOARD_AXIS_MAX {
 			assert!(game1.count_live_neighbors(x.try_into().unwrap(), y.try_into().unwrap()) == 8);
 		}
 	}
