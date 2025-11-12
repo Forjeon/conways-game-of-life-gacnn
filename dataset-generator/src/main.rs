@@ -71,7 +71,7 @@ fn main() -> Result<(), String> {
 	let instances = run(num_instances, max_timestep, sparsity);
 
 	// Write instances
-	let mut writer = BufWriter::new(File::create(outfilepath).unwrap());
+	let mut writer = BufWriter::new(File::create(outfilepath).map_err(|e| format!("Failed to create output file: {e}"))?);
 	for (input, timestep, target) in instances {
 		match writer.write(format!("{}\n", encode_instance(&input, timestep, &target)).as_bytes()) {
 			Err(e) => return Err(format!("Failed to write instances to file: {e}")),
