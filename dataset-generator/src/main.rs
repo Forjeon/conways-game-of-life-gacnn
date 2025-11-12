@@ -51,20 +51,11 @@ fn main() -> Result<(), String> {
 		return Err("The outfilepath argument must not point to a directory".to_string());
 	}
 
-	let num_instances = match args.get(2).unwrap().parse::<u32>() {
-		Ok(val) => val,
-		_ => return Err("The num_instances argument must be a positive number".to_string()),
-	};
+	let num_instances = args.get(2).unwrap().parse::<u32>().map_err(|_| "The num_instances argument must be a positive number".to_string())?;
 
-	let max_timestep = match args.get(3).unwrap().parse::<u32>() {
-		Ok(val) => val,
-		_ => return Err("The max_timestep argument must be a positive number".to_string()),
-	};
+	let max_timestep = args.get(3).unwrap().parse::<u32>().map_err(|_| "The max_timestep argument must be a positive number".to_string())?;
 
-	let sparsity = match args.get(4).unwrap().parse::<f32>() {
-		Ok(val) if val >= 0.0 && val <= 1.0 => val,
-		_ => return Err("The sparsity argument must be a number between 0 and 1".to_string()),
-	};
+	let sparsity = args.get(4).unwrap().parse::<f32>().map_err(|_| "The sparsity argument must be a number between 0 and 1".to_string())?;
 
 	// Generate instances
 	//let instances = run(100_000, 10, 0.25);
