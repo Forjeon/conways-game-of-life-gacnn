@@ -40,7 +40,7 @@ fn main() -> Result<(), String> {
 				_ => return Err("Missing required num_instances, max_timestep, and sparsity arguments".to_string())
 			}
 		},
-		3 => return Err("Missing required max_timestep and sparsity argument".to_string()),
+		3 => return Err("Missing required max_timestep and sparsity arguments".to_string()),
 		4 => return Err("Missing required sparsity argument".to_string()),
 		_ => (),
 	};
