@@ -28,7 +28,7 @@ impl<T> EvolutionaryAlgorithm<T> {
 		&self.generation
 	}
 
-	pub fn evolve<Convergence, Crossover, Fitness, MateSelection, Mutation, Selection>(&mut self) -> ()
+	pub fn evolve<Convergence, Crossover, Fitness, MateSelection, Mutation, Selection>(&mut self) -> u64
 	where
 		Convergence: EvolutionConvergenceChecker<T>,
 		Crossover: Recombinator<T>,
@@ -41,9 +41,9 @@ impl<T> EvolutionaryAlgorithm<T> {
 		while !Convergence::is_converged(num_generations, &self.generation) {
 			num_generations += 1;
 
-			let progenitors = Selection::select(&self.generation);
-			let mates = MateSelection::select_mates(progenitors);
-			self.generation = mates
+			let mut progenitors = Selection::select(&self.generation);
+			let mates = MateSelection::select_mates(&mut progenitors);
+			self.generation = mates.into_iter()
 				.map(|(parent1, parent2)| {
 					let mut individual = Crossover::recombine(parent1, parent2);
 					Mutation::mutate(&mut individual);
@@ -51,6 +51,7 @@ impl<T> EvolutionaryAlgorithm<T> {
 				})
 				.collect();
 		}
+		num_generations
 	}
 }
 

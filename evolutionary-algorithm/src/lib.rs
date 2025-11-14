@@ -14,8 +14,39 @@ mod tests {
     use super::*;
 
     #[test]
-    fn it_works() {
-        let result = add(2, 2);
-        assert_eq!(result, 4);
-    }
+	fn basic_ea() {
+		struct BasicTest{}
+
+		impl EvolutionConvergenceChecker<i32> for BasicTest{
+			fn is_converged(generations: u64, solutions: &[i32]) -> bool {
+				generations >= 10
+			}
+		}
+
+		impl Recombinator<i32> for BasicTest{
+			fn recombine(parent1: &i32, parent2: &i32) -> i32 {
+				parent1 + parent2
+			}
+		}
+
+		impl FitnessEvaluator<i32> for BasicTest{
+			fn evaluate(individual: &i32) -> f64 {
+				(individual.abs() as f64) / 100f64
+			}
+		}
+
+		impl MateSelector<i32> for BasicTest {
+			fn select_mates(progenitors: &mut [i32]) -> Vec<(&i32, &i32)> {
+				progenitors.sort();
+				let (left, right) = progenitors.split(progenitors.len() / 2);
+				left.zip(right).collect()
+			}
+		}
+
+		//impl Mutator<i32> for
+		// Recombinator, FitnessEvaluator, MateSelector, Mutator, ProgenitorsSelector
+		let mut ea = EvolutionaryAlgorithm::<i32>::new_from(vec![-3, -2, -1, 0, 1, 2, 3]);
+		assert!(ea.solutions == vec![-3, -2, -1, 0, 1, 2, 3]);
+		//ea.evolve<
+	}
 }
