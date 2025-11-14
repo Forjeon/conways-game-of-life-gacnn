@@ -1,3 +1,9 @@
+pub mod crossover;
+pub mod evolutionary_algorithm;
+pub mod fitness;
+pub mod mutation;
+pub mod selection;
+
 pub fn add(left: u64, right: u64) -> u64 {
     left + right
 }
