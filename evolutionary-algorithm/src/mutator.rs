@@ -1,3 +1,3 @@
-pub trait Mutation<T> {
+pub trait Mutator<T> {
 	fn mutate(individual: &mut T) -> ();
 }

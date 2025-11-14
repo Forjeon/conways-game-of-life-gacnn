@@ -1,3 +1,3 @@
-pub trait Fitness<T> {
+pub trait FitnessEvaluator<T> {
 	fn evaluate(individual: &T) -> f64;
 }

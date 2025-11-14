@@ -1,8 +1,9 @@
-pub mod crossover;
+pub mod recombinator;
 pub mod evolutionary_algorithm;
-pub mod fitness;
-pub mod mutation;
-pub mod selection;
+pub mod fitness_evaluator;
+pub mod mate_selector;
+pub mod mutator;
+pub mod progenitors_selector;
 
 pub fn add(left: u64, right: u64) -> u64 {
     left + right
