@@ -14,7 +14,7 @@ pub use reproducer::Reproducer;
 pub use recombinator::Recombinator;
 pub use selector::Selector;
 
-pub fn add(left: u64, right: u64) -> u64 {
+pub fn add(left: usize, right: usize) -> usize {
     left + right
 }
 
@@ -33,7 +33,7 @@ mod tests {
 		struct BasicTest{}
 
 		impl EvolutionConvergenceChecker<i32> for BasicTest{
-			fn is_converged(generations: u64, _solutions: &[i32]) -> bool {
+			fn is_converged(generations: usize, _solutions: &[i32]) -> bool {
 				generations >= 1
 			}
 		}
@@ -66,7 +66,7 @@ mod tests {
 		}
 
 		impl Reproducer<i32, BasicTest, BasicTest> for BasicTest {
-			fn reproduce(mates: &[(i32, i32)], population_size: u64) -> Vec<i32> {
+			fn reproduce(mates: &[(i32, i32)], population_size: usize) -> Vec<i32> {
 				let mut successors = vec![];
 				let mut mate_index = 0;
 				while successors.len() < population_size.try_into().unwrap() {
@@ -87,7 +87,7 @@ mod tests {
 
 		let mut ea = Evolution::<i32>::new_from(vec![-3, -2, -1, 0, 1, 2, 3]);
 		assert_eq!(ea.solutions(), vec![-3, -2, -1, 0, 1, 2, 3]);
-		assert_eq!(ea.evolve::<BasicTest, BasicTest, BasicTest, BasicTest, BasicTest, BasicTest>(), 1);
+		assert_eq!(ea.evolve::<BasicTest, BasicTest, BasicTest, BasicTest, BasicTest, BasicTest, BasicTest>(), 1);
 		assert_eq!(ea.solutions(), vec![-3, -3, -3, -3, -3, -3, -3]);
 	}
 }
