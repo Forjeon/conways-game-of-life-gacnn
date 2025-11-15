@@ -68,8 +68,12 @@ mod tests {
 		impl Reproducer<i32, BasicTest, BasicTest> for BasicTest {
 			fn reproduce(mates: &[(i32, i32)], population_size: u64) -> Vec<i32> {
 				let mut successors = vec![];
+				let mut mate_index = 0;
 				while successors.len() < population_size.try_into().unwrap() {
-					todo!()
+					let mut offspring = BasicTest::recombine(&mates[mate_index].0, &mates[mate_index].1);
+					BasicTest::mutate(&mut offspring);
+					successors.push(offspring);
+					mate_index += 1;
 				}
 				successors
 			}
