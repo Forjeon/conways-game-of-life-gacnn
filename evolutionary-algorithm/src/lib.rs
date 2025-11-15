@@ -1,9 +1,16 @@
-pub mod recombinator;
-pub mod evolutionary_algorithm;
+pub mod evolution;
 pub mod fitness_evaluator;
-pub mod mate_selector;
+pub mod matcher;
 pub mod mutator;
-pub mod progenitors_selector;
+pub mod recombinator;
+pub mod selector;
+
+pub use evolution::{Evolution, EvolutionConvergenceChecker, GenerationInitializer};
+pub use fitness_evaluator::FitnessEvaluator;
+pub use matcher::Matcher;
+pub use mutator::Mutator;
+pub use recombinator::Recombinator;
+pub use selector::Selector;
 
 pub fn add(left: u64, right: u64) -> u64 {
     left + right
@@ -11,15 +18,21 @@ pub fn add(left: u64, right: u64) -> u64 {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
+    //use super::evolution::Evolution;
+	//use super::fitness_evaluator::FitnessEvaluator;
+	//use super::matcher::Matcher;
+	//use super::mutator::Mutator;
+	//use super::recombinator::Recombinator;
+	//use super::selector::Selector;
+	use super::*;
 
     #[test]
 	fn basic_ea() {
 		struct BasicTest{}
 
 		impl EvolutionConvergenceChecker<i32> for BasicTest{
-			fn is_converged(generations: u64, solutions: &[i32]) -> bool {
-				generations >= 10
+			fn is_converged(generations: u64, _solutions: &[i32]) -> bool {
+				generations >= 1
 			}
 		}
 
@@ -35,18 +48,30 @@ mod tests {
 			}
 		}
 
-		impl MateSelector<i32> for BasicTest {
-			fn select_mates(progenitors: &mut [i32]) -> Vec<(&i32, &i32)> {
+		impl Matcher<i32> for BasicTest {
+			fn match_mates(progenitors: &[i32]) -> Vec<(i32, i32)> {
+				let mut progenitors = progenitors.to_owned();
 				progenitors.sort();
-				let (left, right) = progenitors.split(progenitors.len() / 2);
-				left.zip(right).collect()
+				let (left, right) = progenitors.split_at(progenitors.len() / 2);
+				left.to_owned().into_iter().zip(right.to_owned()).collect()
 			}
 		}
 
-		//impl Mutator<i32> for
-		// Recombinator, FitnessEvaluator, MateSelector, Mutator, ProgenitorsSelector
-		let mut ea = EvolutionaryAlgorithm::<i32>::new_from(vec![-3, -2, -1, 0, 1, 2, 3]);
-		assert!(ea.solutions == vec![-3, -2, -1, 0, 1, 2, 3]);
-		//ea.evolve<
+		impl Mutator<i32> for BasicTest {
+			fn mutate(individual: &mut i32) -> () {
+				*individual += 1i32;
+			}
+		}
+
+		impl Selector<i32, BasicTest> for BasicTest {
+			fn select(population: &[i32]) -> Vec<i32> {
+				population.split_at(population.len() / 2).0.to_vec()
+			}
+		}
+
+		let mut ea = Evolution::<i32>::new_from(vec![-3, -2, -1, 0, 1, 2, 3]);
+		assert_eq!(ea.solutions(), vec![-3, -2, -1, 0, 1, 2, 3]);
+		assert_eq!(ea.evolve::<BasicTest, BasicTest, BasicTest, BasicTest, BasicTest, BasicTest>(), 1);
+		assert_eq!(ea.solutions(), vec![-3, -3, -3, -3, -3, -3, -3]);
 	}
 }
