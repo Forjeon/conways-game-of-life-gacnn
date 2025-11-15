@@ -1,8 +1,4 @@
-use super::recombinator::Recombinator;
-use super::fitness_evaluator::FitnessEvaluator;
-use super::matcher::Matcher;
-use super::mutator::Mutator;
-use super::selector::Selector;
+use super::{FitnessEvaluator, Matcher, Mutator, Recombinator, Reproducer, Selector};
 
 pub struct Evolution<T> {
 	generation: Vec<T>,

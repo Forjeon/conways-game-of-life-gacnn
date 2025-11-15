@@ -2,6 +2,7 @@ pub mod evolution;
 pub mod fitness_evaluator;
 pub mod matcher;
 pub mod mutator;
+pub mod reproducer;
 pub mod recombinator;
 pub mod selector;
 
@@ -9,6 +10,7 @@ pub use evolution::{Evolution, EvolutionConvergenceChecker, GenerationInitialize
 pub use fitness_evaluator::FitnessEvaluator;
 pub use matcher::Matcher;
 pub use mutator::Mutator;
+pub use reproducer::Reproducer;
 pub use recombinator::Recombinator;
 pub use selector::Selector;
 
@@ -36,12 +38,6 @@ mod tests {
 			}
 		}
 
-		impl Recombinator<i32> for BasicTest{
-			fn recombine(parent1: &i32, parent2: &i32) -> i32 {
-				parent1 + parent2
-			}
-		}
-
 		impl FitnessEvaluator<i32> for BasicTest{
 			fn evaluate(individual: &i32) -> f64 {
 				(individual.abs() as f64) / 100f64
@@ -60,6 +56,22 @@ mod tests {
 		impl Mutator<i32> for BasicTest {
 			fn mutate(individual: &mut i32) -> () {
 				*individual += 1i32;
+			}
+		}
+
+		impl Recombinator<i32> for BasicTest{
+			fn recombine(parent1: &i32, parent2: &i32) -> i32 {
+				parent1 + parent2
+			}
+		}
+
+		impl Reproducer<i32, BasicTest, BasicTest> for BasicTest {
+			fn reproduce(mates: &[(i32, i32)], population_size: u64) -> Vec<i32> {
+				let mut successors = vec![];
+				while successors.len() < population_size.try_into().unwrap() {
+					todo!()
+				}
+				successors
 			}
 		}
 
