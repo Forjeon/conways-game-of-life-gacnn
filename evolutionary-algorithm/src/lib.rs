@@ -20,12 +20,6 @@ pub fn add(left: usize, right: usize) -> usize {
 
 #[cfg(test)]
 mod tests {
-    //use super::evolution::Evolution;
-	//use super::fitness_evaluator::FitnessEvaluator;
-	//use super::matcher::Matcher;
-	//use super::mutator::Mutator;
-	//use super::recombinator::Recombinator;
-	//use super::selector::Selector;
 	use super::*;
 
     #[test]
@@ -73,7 +67,7 @@ mod tests {
 					let mut offspring = BasicTest::recombine(&mates[mate_index].0, &mates[mate_index].1);
 					BasicTest::mutate(&mut offspring);
 					successors.push(offspring);
-					mate_index += 1;
+					mate_index = (mate_index + 1) % mates.len();
 				}
 				successors
 			}
@@ -81,6 +75,7 @@ mod tests {
 
 		impl Selector<i32, BasicTest> for BasicTest {
 			fn select(population: &[i32]) -> Vec<i32> {
+				let (l, r) = population.split_at(population.len() / 2);
 				population.split_at(population.len() / 2).0.to_vec()
 			}
 		}
@@ -88,6 +83,6 @@ mod tests {
 		let mut ea = Evolution::<i32>::new_from(vec![-3, -2, -1, 0, 1, 2, 3]);
 		assert_eq!(ea.solutions(), vec![-3, -2, -1, 0, 1, 2, 3]);
 		assert_eq!(ea.evolve::<BasicTest, BasicTest, BasicTest, BasicTest, BasicTest, BasicTest, BasicTest>(), 1);
-		assert_eq!(ea.solutions(), vec![-3, -3, -3, -3, -3, -3, -3]);
+		assert_eq!(ea.solutions(), vec![-4, -4, -4, -4, -4, -4, -4]);
 	}
 }
