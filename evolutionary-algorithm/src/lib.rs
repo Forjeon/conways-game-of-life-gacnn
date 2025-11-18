@@ -14,9 +14,6 @@ pub use reproducer::Reproducer;
 pub use recombinator::Recombinator;
 pub use selector::Selector;
 
-pub fn add(left: usize, right: usize) -> usize {
-    left + right
-}
 
 #[cfg(test)]
 mod tests {
