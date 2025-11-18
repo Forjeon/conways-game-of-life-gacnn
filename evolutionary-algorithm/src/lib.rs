@@ -75,7 +75,6 @@ mod tests {
 
 		impl Selector<i32, BasicTest> for BasicTest {
 			fn select(population: &[i32]) -> Vec<i32> {
-				let (l, r) = population.split_at(population.len() / 2);
 				population.split_at(population.len() / 2).0.to_vec()
 			}
 		}
