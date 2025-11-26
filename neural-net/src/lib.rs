@@ -2,6 +2,8 @@ pub mod activation_function;
 pub mod backprop;
 pub mod feedforward;
 pub mod filter;
+pub mod loss;
+pub mod neural_net;
 pub mod neuron;
 pub mod pooler;
 
@@ -9,6 +11,8 @@ pub use activation_function::ActivationFunction;
 pub use backprop::Backprop;
 pub use feedforward::Feedforward;
 pub use filter::Filter;
+pub use loss::Loss;
+pub use neural_net::NeuralNet;
 pub use neuron::Neuron;
 pub use pooler::Pooler;
 
