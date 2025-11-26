@@ -3,3 +3,8 @@ pub trait Loss<T> {
 }
 
 // TODO: log loss
+
+#[cfg(test)]
+mod loss_tests {
+	use super::*;
+}

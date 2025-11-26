@@ -7,3 +7,8 @@ pub struct Pooler {
 }
 
 // TODO: feedforward, backprop (do nothing)
+
+#[cfg(test)]
+mod pooler_tests {
+	use super::*;
+}

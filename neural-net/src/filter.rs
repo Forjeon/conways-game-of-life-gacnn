@@ -7,3 +7,8 @@ pub struct Filter {
 }
 
 // TODO: feedforward<f64, Identity, f64>, backprop
+
+#[cfg(test)]
+mod filter_tests {
+	use super::*;
+}

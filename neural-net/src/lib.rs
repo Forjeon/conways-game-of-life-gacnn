@@ -15,12 +15,3 @@ pub use loss::Loss;
 pub use neural_net::NeuralNet;
 pub use neuron::Neuron;
 pub use pooler::Pooler;
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn it_works() {
-    }
-}

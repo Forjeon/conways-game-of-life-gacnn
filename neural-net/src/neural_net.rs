@@ -5,3 +5,8 @@ pub struct NeuralNet {	// TODO: generics here
 }
 
 // TODO: impls
+
+#[cfg(test)]
+mod neural_net_tests {
+	use super::*;
+}

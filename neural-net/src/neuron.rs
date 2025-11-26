@@ -8,3 +8,8 @@ pub struct Neuron<Activation: ActivationFunction> {
 }
 
 // TODO: feedforward, backprop
+
+#[cfg(test)]
+mod neuron_tests {
+	use super::*;
+}
