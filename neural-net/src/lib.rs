@@ -6,6 +6,7 @@ pub mod loss;
 pub mod neural_net;
 pub mod neuron;
 pub mod pooler;
+pub mod trainer;
 
 pub use activation_function::ActivationFunction;
 pub use backprop::Backprop;
@@ -15,3 +16,4 @@ pub use loss::Loss;
 pub use neural_net::NeuralNet;
 pub use neuron::Neuron;
 pub use pooler::Pooler;
+pub use trainer::Trainer;
