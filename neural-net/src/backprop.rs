@@ -1,3 +1,3 @@
 pub trait Backprop {
-	fn backpropagate(&mut self, loss: f64) -> f64;
+	fn backpropagate(&mut self, learning_rate: f64, loss: f64) -> f64;
 }
