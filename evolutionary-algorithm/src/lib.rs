@@ -76,7 +76,7 @@ mod tests {
 			}
 		}
 
-		let mut ea = Evolution::<i32>::new_from(vec![-3, -2, -1, 0, 1, 2, 3]);
+		let mut ea = Evolution::<i32>::new_from(vec![-3, -2, -1, 0, 1, 2, 3]).unwrap();
 		assert_eq!(ea.solutions(), vec![-3, -2, -1, 0, 1, 2, 3]);
 		assert_eq!(ea.evolve::<BasicTest, BasicTest, BasicTest, BasicTest, BasicTest, BasicTest, BasicTest>(), 1);
 		assert_eq!(ea.solutions(), vec![-4, -4, -4, -4, -4, -4, -4]);

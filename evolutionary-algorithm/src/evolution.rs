@@ -12,8 +12,11 @@ impl<T> Evolution<T> {
 		}
 	}
 
-	pub fn new_from(generation: Vec<T>) -> Evolution<T> {
-		Evolution { generation }
+	pub fn new_from(generation: Vec<T>) -> Result<Evolution<T>, ()> {
+		match generation.is_empty() {
+			false => Ok(Evolution { generation }),
+			_ => Err(()),
+		}
 	}
 
 	pub fn solutions(&self) -> &[T] {
